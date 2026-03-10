@@ -30,7 +30,7 @@ func createConn(target string) {
 
 	atomic.AddInt64(&total, 1)
 
-	// 持續送 header
+	// sending header
 	go func(c net.Conn) {
 		for {
 			fmt.Fprintf(c, "X-Test: slow\r\n")
@@ -43,17 +43,6 @@ func createBatch(target string, n int) {
 	for i := 0; i < n; i++ {
 		go createConn(target)
 	}
-}
-
-func sendHeaderAll() {
-	mu.Lock()
-	defer mu.Unlock()
-
-	for _, conn := range connections {
-		fmt.Fprintf(conn, "X-Test: keep-alive\r\n")
-	}
-
-	fmt.Println("header sent to all connections")
 }
 
 func printStatus() {
@@ -84,9 +73,6 @@ func main() {
 			createBatch(target, 50)
 			fmt.Println("Added 50 connections")
 
-		case "cmd":
-			sendHeaderAll()
-
 		case "stat":
 			printStatus()
 
@@ -95,7 +81,7 @@ func main() {
 			return
 
 		default:
-			fmt.Println("commands: add | cmd | stat | quit")
+			fmt.Println("commands: add | stat | quit")
 		}
 	}
 }
