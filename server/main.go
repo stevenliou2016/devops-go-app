@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	// ===== Config (可改為獨立 config package) =====
+	// ===== Config =====
 	port := getEnv("PORT", "8080")
 	shutdownTimeoutSec := getEnvAsInt("SHUTDOWN_TIMEOUT", 10)
 
@@ -41,7 +41,7 @@ func main() {
 		Handler:           loggingMiddleware(mux),
 	}
 
-	// ===== Server Start (非阻塞) =====
+	// ===== Server Start (non-blocking) =====
 	go func() {
 		log.Printf("server starting on port %s\n", port)
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
